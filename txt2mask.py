@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+import uvicorn
 
 import torch
 import requests
@@ -74,3 +75,5 @@ async def root():
 async def post(req:Model):
     b64_string = get_mask(req.url)
     return b64_string
+
+uvicorn.run(app, host="0.0.0.0", port=8000)

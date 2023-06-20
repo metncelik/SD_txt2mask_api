@@ -27,7 +27,7 @@ model.eval();
 # non-strict, because we only stored decoder weights (not CLIP weights)
 model.load_state_dict(torch.load('/content/clipseg/weights/rd64-uni.pth', map_location=torch.device('cuda')), strict=False);
 
-def get_mask(url):
+def get_mask(url,prompts):
     # or load from URL...
     image_url = url 
     input_image = Image.open(requests.get(image_url, stream=True).raw)
@@ -38,7 +38,6 @@ def get_mask(url):
         transforms.Resize((512, 512)),
     ])
     img = transform(input_image).unsqueeze(0)
-    prompts = ['cloth,body']
 
     # predict
     with torch.no_grad():
@@ -64,6 +63,7 @@ def get_mask(url):
 
 class Model(BaseModel):
     url:str
+    prompts:list
 
 app = FastAPI()
 
@@ -73,7 +73,7 @@ async def root():
 
 @app.post("/post/")
 async def post(req:Model):
-    b64_string = get_mask(req.url)
+    b64_string = get_mask(req.url,req.prompts)
     return b64_string
 
 uvicorn.run(app, host="0.0.0.0", port=8000)

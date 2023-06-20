@@ -59,7 +59,7 @@ def get_mask(url):
 
     b64_string = base64.b64encode(masked_image.read()).decode("utf_8")
 
-    print(b64_string)
+    return b64_string
 
 
 class Model(BaseModel):
